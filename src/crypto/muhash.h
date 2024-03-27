@@ -1,13 +1,9 @@
-// Copyright (c) 2017-2020 The Bitcoin Core developers
+// Copyright (c) 2017-2021 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_CRYPTO_MUHASH_H
 #define BITCOIN_CRYPTO_MUHASH_H
-
-#if defined(HAVE_CONFIG_H)
-#include <config/bitcoin-config.h>
-#endif
 
 #include <serialize.h>
 #include <uint256.h>
@@ -22,8 +18,9 @@ private:
     Num3072 GetInverse() const;
 
 public:
+    static constexpr size_t BYTE_SIZE = 384;
 
-#ifdef HAVE___INT128
+#ifdef __SIZEOF_INT128__
     typedef unsigned __int128 double_limb_t;
     typedef uint64_t limb_t;
     static constexpr int LIMBS = 48;
@@ -48,8 +45,10 @@ public:
     void Divide(const Num3072& a);
     void SetToOne();
     void Square();
+    void ToBytes(unsigned char (&out)[BYTE_SIZE]);
 
     Num3072() { this->SetToOne(); };
+    Num3072(const unsigned char (&data)[BYTE_SIZE]);
 
     SERIALIZE_METHODS(Num3072, obj)
     {
@@ -78,7 +77,7 @@ public:
  * arbitrary subset of the update operations, allowing them to be
  * efficiently combined later.
  *
- * Muhash does not support checking if an element is already part of the
+ * MuHash does not support checking if an element is already part of the
  * set. That is why this class does not enforce the use of a set as the
  * data it represents because there is no efficient way to do so.
  * It is possible to add elements more than once and also to remove
@@ -91,8 +90,6 @@ public:
 class MuHash3072
 {
 private:
-    static constexpr size_t BYTE_SIZE = 384;
-
     Num3072 m_numerator;
     Num3072 m_denominator;
 

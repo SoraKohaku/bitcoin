@@ -1,11 +1,18 @@
 package=libnatpmp
-$(package)_version=20150609
-$(package)_download_path=https://miniupnp.tuxfamily.org/files/
-$(package)_file_name=$(package)-$($(package)_version).tar.gz
-$(package)_sha256_hash=e1aa9c4c4219bc06943d6b2130f664daee213fb262fcb94dd355815b8f4536b0
+$(package)_version=07004b97cf691774efebe70404cf22201e4d330d
+$(package)_download_path=https://github.com/miniupnp/libnatpmp/archive
+$(package)_file_name=$($(package)_version).tar.gz
+$(package)_sha256_hash=9321953ceb39d07c25463e266e50d0ae7b64676bb3a986d932b18881ed94f1fb
+$(package)_patches=no_libtool.patch
 
 define $(package)_set_vars
   $(package)_build_opts=CC="$($(package)_cc)"
+  $(package)_build_opts_mingw32=CPPFLAGS=-DNATPMP_STATICLIB
+  $(package)_build_env+=CFLAGS="$($(package)_cflags) $($(package)_cppflags)" AR="$($(package)_ar)"
+endef
+
+define $(package)_preprocess_cmds
+  patch -p1 < $($(package)_patch_dir)/no_libtool.patch
 endef
 
 define $(package)_build_cmds

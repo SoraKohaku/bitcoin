@@ -1,4 +1,4 @@
-// Copyright (c) 2012-2020 The Bitcoin Core developers
+// Copyright (c) 2012-2022 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,6 +8,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <mutex>
+#include <stdexcept>
 
 namespace {
 template <typename MutexType>
@@ -76,7 +77,7 @@ void TestInconsistentLockOrderDetected(MutexType& mutex1, MutexType& mutex2) NO_
 }
 } // namespace
 
-BOOST_FIXTURE_TEST_SUITE(sync_tests, BasicTestingSetup)
+BOOST_AUTO_TEST_SUITE(sync_tests)
 
 BOOST_AUTO_TEST_CASE(potential_deadlock_detected)
 {
@@ -106,12 +107,12 @@ BOOST_AUTO_TEST_CASE(potential_deadlock_detected)
 #ifdef DEBUG_LOCKORDER
 BOOST_AUTO_TEST_CASE(double_lock_mutex)
 {
-    TestDoubleLock<Mutex>(true /* should throw */);
+    TestDoubleLock<Mutex>(/*should_throw=*/true);
 }
 
 BOOST_AUTO_TEST_CASE(double_lock_recursive_mutex)
 {
-    TestDoubleLock<RecursiveMutex>(false /* should not throw */);
+    TestDoubleLock<RecursiveMutex>(/*should_throw=*/false);
 }
 #endif /* DEBUG_LOCKORDER */
 
